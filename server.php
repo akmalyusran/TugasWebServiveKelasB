@@ -1,54 +1,99 @@
 <?php
-  require_once('dbconn.php');
-  require_once('lib/nusoap.php'); 
-  $server = new nusoap_server();
 
-  $namespace = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
-  $server->configureWSDL('Petshop');
+require 'vendor/autoload.php';
+require_once('vendor/econea/nusoap/src/nusoap.php');
+$server = new soap_server();
 
-function get_makanan($Hewan) {
-    if ($Hewan == "Kucing"){
-        return "Merk Makanan yang tersedia untuk kucing adalah Royal Canin, Whiskas, dan Proplan ";
-    } 
-    elseif ($Hewan == "Anjing"){
-        return "Merk Makanan yang tersedia untuk anjing adalah Proplan dan Alpo";
-    }
-    else {
-        return "Mohon Maaf makanan untuk hewan ini tidak tersedia :(";
-    }
-}
+$namespace = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
+$server->configureWSDL('Petshop');
+$server->wsdl->schemaTargetNamespace = $namespace;
 
-function hitung_harga($Harga){
-  if ($Harga >= "350.000"){
-      return "Untuk Harga itu terdapat Variasi Makanan Kering dan Basah untuk Kucing dan Anjing Mulai dari Royal Canin, Proplan, Pedigree dan Aplo";
-  }
-  elseif ($Harga <= "30.000"){
-      return "Untuk Harga itu hanya terdapat Cemilan saja";
-  }
-  else {
-      return "Mohon Maaf tidak ada makanan untuk harga itu :(";
-  }
-}
-
-function input_barang($Merk_makanan, $Hewan, $Harga, $Rasa, $Kategori){
-  global $dbconn;
-  $sql_insert = "insert into books (Merk_makanan, Hewan, Harga, Rasa, Kategori) values ( :Merk_makanan, :Hewan, :Harga, :Rasa, :Kategori)";
-  $stmt = $dbconn->prepare($sql_insert);
-}
-
-$server->register('get_makanan',
-    array('hewan' => 'xsd:string',)
+$server->register('merk_anjing',
+    array('name' => 'xsd:string'),
+    array('return' => 'xsd:string'),
+    $namespace,
+    false,
+    'rpc',
+    'encoded',
+    'Nama-nama merek Makanan Anjing'
 );
 
-$server->register('hitung_harga',
-    array('harga' => 'xsd:string')
+$server->register('merk_kucing',
+    array('name' => 'xsd:string'),
+    array('return' => 'xsd:string'),
+    $namespace,
+    false,
+    'rpc',
+    'encoded',
+    'Nama-nama merk Makanan Kucing'
 );
 
-$server->register('input_barang',
-    array('Merk_makanan' => 'xsd:string', 'Hewan' => 'xsd:string', 'Harga' => 'xsd:string', 'Rasa' => 'xsd:string', 'Kategori' => 'xsd:string'),
+$server->register('makanan_kucing',
+    array('name' => 'xsd:float'),
+    array('return' => 'xsd:float'),
+    $namespace,
+    false,
+    'rpc',
+    'encoded',
+    'Deskripsi Produk Makanan Kucing'
 );
+
+$server->register('makanan_anjing',
+    array('name' => 'xsd:float'),
+    array('return' => 'xsd:float'),
+    $namespace,
+    false,
+    'rpc',
+    'encoded',
+    'Deskripsi Produk Makanan Anjing'
+);
+
+$server->register('promo',
+    array('name' => 'xsd:float'),
+    array('return' => 'xsd:float'),
+    $namespace,
+    false,
+    'rpc',
+    'encoded',
+    'Promo Bundling Makanan'
+);
+
+$server->register('get_message',
+    array('name' => 'xsd:string'),
+    array('return' => 'xsd:string'),
+    $namespace,
+    false,
+    'rpc',
+    'encoded',
+    'Selamat Datang di Petshop Kami'
+);
+
+// Membuat method operasi matematika dasar
+function merk_anjing($merek_1) {
+    return "Merk Makanan yang tersedia untuk anjing adalah $merek_1<br>";
+}
+
+function merk_kucing($merek_2) {
+    return "Merk Makanan yang tersedia untuk kucing adalah $merek_2<br>";
+}
+
+function makanan_kucing($x, $y) {
+    return $x - ($x * $y) ;
+}
+
+function makanan_anjing($x, $y) {
+    return $x - ($x * $y) ;
+}
+
+function promo($x, $y) {
+    return $x * 3 - $y ;
+}
+
+// Membuat method welcome message
+function get_message($name) {
+    return "Selamat datang $name";
+}
 
 $server->service(file_get_contents("php://input"));
 exit();
-
-
+?>
