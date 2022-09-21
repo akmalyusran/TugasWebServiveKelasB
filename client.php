@@ -22,7 +22,7 @@ $response = $client->call('merk_kucing', array(
 ));
 echo $response;
 
-// Inisiasi variabel angka
+// Inisiasi variabel 
 $harga_awal_kucing = 250000;
 $harga_awal_anjing = 350000;
 $besar_diskon = 0.15; //Diskon 15%
