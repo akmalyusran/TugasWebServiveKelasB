@@ -68,7 +68,6 @@ $server->register('get_message',
     'Selamat Datang di Petshop Kami'
 );
 
-// Membuat method operasi matematika dasar
 function merk_anjing($merek_1) {
     return "Merk Makanan yang tersedia untuk anjing adalah $merek_1<br>";
 }
@@ -89,7 +88,6 @@ function promo($x, $y) {
     return $x * 3 - $y ;
 }
 
-// Membuat method welcome message
 function get_message($name) {
     return "Selamat datang $name";
 }
